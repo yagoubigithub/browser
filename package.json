@@ -1,8 +1,45 @@
 {
   "name": "browser",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "main": "./public/electron.js",
+  "homepage": "./",
+  "build": {
+    "appId": "com.browser",
+    "directories": {
+      "buildResources": "public"
+    },
+    "files": [
+     
+  
+      "./public/preload.js"
+    ],
+    "win": {
+      "icon": "public/logo.png",
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "icon": "public/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": true,
+      "uninstallDisplayName": "browser",
+      "license": "license.txt",
+      "language": 1033,
+      "displayLanguageSelector": false
+    },
+    "productName": "browser",
+    "copyright": "yagoubi abdelkader"
+  },
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.4",
+    "@mui/material": "^5.2.4",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -10,17 +47,28 @@
     "@types/node": "^16.11.14",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
+    "concurrently": "^6.4.0",
+    "cross-env": "^7.0.3",
+    "draggabilly": "^2.4.1",
+    "electron-is-dev": "^2.0.0",
+    "jquery": "^3.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
     "typescript": "^4.5.4",
+    "v8-compile-cache": "^2.3.0",
+    "wait-on": "^6.0.0",
     "web-vitals": "^2.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "react-start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "react-test": "react-scripts test --env=jsdom",
+    "react-eject": "react-scripts eject",
+    "electron-build": "electron-builder",
+    "release": "yarn react-build && electron-builder --publish=always",
+    "build": "yarn react-build && yarn electron-build",
+    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
     "extends": [
@@ -30,14 +78,15 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "last 1 electron version"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 electron version"
     ]
+  },
+  "devDependencies": {
+    "electron": "13",
+    "electron-builder": "^22.14.5",
+    "electron-rebuild": "^3.2.5"
   }
 }
