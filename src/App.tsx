@@ -63,7 +63,9 @@ const App = () => {
     })
     webview.addEventListener('did-navigate', (e:any)=>{
 
+      console.log(url)
       setContentReady(false)
+      setUrl(e.url)
     })
 
     
