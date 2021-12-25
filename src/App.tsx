@@ -18,6 +18,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+
 
 
 //icons
@@ -42,6 +45,7 @@ const App = () => {
   const descriptionElementRef = React.useRef(null);
 
   const [cangoback, setCanGoBack] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [cangoforward, setCanGoFoward] = useState(false)
   const [url, setUrl] = useState("https://www.google.com/")
   const [viewUrl, setViewUrl] = useState("https://www.google.com/")
@@ -57,7 +61,7 @@ const App = () => {
       setCanGoFoward(webview.canGoForward())
       setContentReady(true)
     })
-    webview.addEventListener('did-start-loading', (e:any)=>{
+    webview.addEventListener('did-navigate', (e:any)=>{
 
       setContentReady(false)
     })
@@ -107,16 +111,25 @@ const App = () => {
     const webview: WebviewTag = document.getElementById("webview") as WebviewTag
     webview.send(`getString`,"path")
 
+    setLoading(true)
     webview.addEventListener('ipc-message', (event) => {
       setString(event.channel)
       setOpen(true)
+      setLoading(false)
      
     })
   
   
   }
+
+  const Loading   = () =>{
+
+    return ( <Box sx={{ display: 'flex' }}>
+    <CircularProgress  color="secondary" />
+  </Box>)
+  }
   const Taskbar = () => (
-    <div style={{ backgroundColor: "#f2f2f2", paddingLeft: "1rem", maxHeight: "4rem", display: "flex", padding: "0.5rem" }} onClick={focusWebView}>
+    <div style={{ backgroundColor: "#f2f2f2", paddingLeft: "1rem", maxHeight: "4rem", display: "flex", padding: "0.5rem" }} >
       <div >
         <IconButton disabled={!cangoback} onClick={goBack}>
 
@@ -143,7 +156,7 @@ const App = () => {
             placeholder="URL"
             variant="standard"
             fullWidth
-            onClick={focusMe}
+            
             autoFocus
             onChange={handleChange}
             defaultValue={url}
@@ -162,6 +175,8 @@ const App = () => {
         <Button variant="contained" color="primary" onClick={getString}  disabled={!contentReady}>
 
           get String
+
+          {loading && <Loading />}
         </Button>
 
       </div>
@@ -182,7 +197,7 @@ const App = () => {
 
 
       <Taskbar />
-      <webview id="webview" src={viewUrl} style={{ width: "100vw", height: "calc(100vh - 3rem )" }} allowpopups={true}
+      <webview id="webview" src={viewUrl} style={{ width: "100vw", height: "calc(100vh - 5rem )" }} allowpopups={true}
         preload={`file://${dirname}/build/preload.js`}
       ></webview>
 
